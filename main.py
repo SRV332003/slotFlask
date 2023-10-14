@@ -15,7 +15,7 @@ headers = {
     'Access-Control-Allow-Origin': '*'
 }
 app = Flask(__name__)
-run_with_ngrok(app)
+# run_with_ngrok(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
@@ -108,7 +108,7 @@ def getAllSlots():
     return jsonify({'status': 200, 'data': slots})
 
 
-@app.route('/verify', methods=['GET'])
+@app.route('/verify', methods=['POST'])
 def verify():
     data = request.get_json()
     email = data['email']
