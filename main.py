@@ -22,7 +22,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def query(query):
     mydb.connect()
     db.execute(query)
-    db.commit()
+    mydb.commit()
     mydb.close()
     return db
 
