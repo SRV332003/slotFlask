@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import *
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_ngrok import run_with_ngrok
 from hashlib import sha256,blake2b
@@ -15,14 +15,17 @@ headers = {
     'Access-Control-Allow-Origin': '*'
 }
 app = Flask(__name__)
-# run_with_ngrok(app)
+run_with_ngrok(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 def query(query):
     mydb.connect()
     db.execute(query)
-    mydb.commit()
+    try:
+        mydb.commit()
+    except:
+        pass
     mydb.close()
     return db
 
