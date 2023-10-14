@@ -129,8 +129,8 @@ def verify():
 @app.route('/bookSlot', methods=['POST'])
 def bookSlot():
     data = request.get_json()
-    hsh,slotid = data['hash'],data['slotid']
-    db.execute("SELECT id FROM users WHERE hash=%s", (hsh,))
+    email,slotid = data['email'],data['slotid']
+    db.execute("SELECT id FROM users WHERE hash=%s", (email,))
     userid = db.fetchone()
     if userid:
         db.execute("SELECT * FROM slots WHERE id=%s", (slotid,))
@@ -140,10 +140,10 @@ def bookSlot():
                 return jsonify({'status': 201, 'message': "Slot not available"})
             else:
                 
-                db.execute("UPDATE users SET bookStatus=1, slotid=%s WHERE id=%s", (slotid,id))
+                db.execute("UPDATE users SET bookStatus=1, slotid=%s WHERE id=%s", (slotid,userid))
                 db.execute("UPDATE slots SET available=available-1 WHERE id=%s", (slotid,))
                 mydb.commit()
-                
+
                 return jsonify({'status': 200, 'message': "Slot booked"})
         else:
             return jsonify({'status': 201, 'message': "Slot doesn't exist"})
