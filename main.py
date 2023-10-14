@@ -110,6 +110,8 @@ def verify():
     if not(user):
         return jsonify({'status': 201, 'message': "User doesn't exist"})
     else:
+        if db["bookStatus"]:
+            return jsonify({'status': 201, 'message': "User already verified"})
         #generate hash
         hsh = blake2b(sha256(sha256((email+"Manan2023").encode('utf-8')).hexdigest().encode('utf-8')).hexdigest().encode('utf-8')).hexdigest()
 
@@ -142,10 +144,24 @@ def bookSlot():
         else:
             return jsonify({'status': 201, 'message': "Slot doesn't exist"})
     else:
-        return jsonify({'status': 201, 'message': "User doesn't exist"})
+        return jsonify({'status': 202, 'message': "User doesn't exist"})
     
 
-
+@app.route('/checkBooking', methods=['POST'])
+def checkBooking():
+    data = request.get_json()
+    hsh = data['hash']
+    db.execute("SELECT id FROM users WHERE hash=%s", (hsh))
+    userid = db.fetchone()
+    if userid:
+        db.execute("SELECT * FROM bookings WHERE userid=%s", (userid))
+        booking = db.fetchone()
+        if booking:
+            return jsonify({'status': 201, 'message': "Slot already booked!"})
+        else:
+            return jsonify({'status': 200, 'message': "Slot not booked"})
+    else:
+        return jsonify({'status': 202, 'message': "User doesn't exist"})
 
 
 
