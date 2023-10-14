@@ -36,7 +36,9 @@ def addCampaign():
         if inf["campaign"]:
             return jsonify({"message": "Campaign already exists.\n Please Reset it before updating new data", 'status': 201})
     
+    # print("Slots",type(users),users)
     for user in users:
+        
         try:
             db.execute("select * from users where email=%s", (user["email"],))
             if db.fetchone():
@@ -49,16 +51,16 @@ def addCampaign():
         mydb.commit()
 
     for slot in slots:
-        # try:
-        db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s,%d)",
-                   (slot["startTime"], slot["endTime"], int(slot["available"])))
-        # except:
-        #     return jsonify({"message": "Issue adding the Slot with at time:"+slot["startTime"], 'status': 201})
+        try:
+            db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s,%s)",
+                    (slot["startTime"], slot["endTime"], slot["available"]))
+        except:
+            return jsonify({"message": "Issue adding the Slot with at time:"+slot["startTime"], 'status': 201})
         mydb.commit()
     with open('data.json', 'w') as f:
-        f.write(jsonify({"campaign": True}))
+        json.dump({"campaign": True}, f)
     
-    return jsonify({"data": user["uid"], 'status': 200})
+    return jsonify({"message": "Campaign Created SucessFully", 'status': 200})
 
 @app.route('/initiateCampaign', methods=['POST'])
 def initiateCampaign():
