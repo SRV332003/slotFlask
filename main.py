@@ -50,8 +50,8 @@ def addCampaign():
         if db.fetchone():
             continue
             return jsonify({"message": "User with email:"+user["email"]+" already exists", 'status': 201})
-        db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year) VALUES (%s,%s,%s,%s,%s,%s)",
-                (user["name"],user["email"], user["mobile"],user["rollnumber"],user["branch"],user["year"]))
+        db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year,hash) VALUES (%s,%s,%s,%s,%s,%s,%s)",
+                (user["name"],user["email"], user["mobile"],user["rollnumber"],user["branch"],user["year"],""))
         mydb.commit()
 
     for slot in slots:
