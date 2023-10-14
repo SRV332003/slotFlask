@@ -1,9 +1,7 @@
 import mysql.connector
 from flask import *
 from flask_cors import CORS
-from flask_socketio import SocketIO, send, emit
 from flask_ngrok import run_with_ngrok
-import geopy.distance
 from hashlib import sha256,blake2b
 import json
 mydb = mysql.connector.connect(
