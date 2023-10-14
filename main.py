@@ -19,15 +19,6 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
-def query(query,data=None):
-    mydb.connect()
-    db.execute(query,data)
-    try:
-        mydb.commit()
-    except:
-        pass
-    mydb.close()
-    return db
 
 @app.route('/', methods=['POST', "GET"])
 def home():
@@ -79,10 +70,12 @@ def resetCampaign():
     data = request.get_json()
 
     if data["password"] == "Manan_technosurge_slots_2023":
-        query("DELETE FROM users")
-        query("DELETE FROM slots")
-        query("DELETE FROM bookings")
-
+        db.execute("DELETE FROM users")
+        
+        db.execute("DELETE FROM slots")
+        db.execute("DELETE FROM bookings")
+        mydb.commit()
+        
         with open('data.json', 'w') as f:
             f.write(jsonify({"campaign": False}))
         return jsonify({"data": "Campaign Reset", 'status': 200})
@@ -93,7 +86,7 @@ def resetCampaign():
 @app.route('/getAllUsers', methods=['GET'])
 def getAllUsers():
     
-    db = query("SELECT * FROM users")
+    db.execute("SELECT * FROM users")
     users = db.fetchall()
     if not(users):
         return jsonify({'status': 201, 'message': "Table is empty or doesn't exist"})
@@ -101,7 +94,7 @@ def getAllUsers():
 
 @app.route('/getAllSlots', methods=['GET'])
 def getAllSlots():
-    db = query("SELECT * FROM slots")
+    db.execute("SELECT * FROM slots")
     slots = db.fetchall()
     if not(slots):
         return jsonify({'status': 201, 'message': "Table is empty or doesn't exist"})
