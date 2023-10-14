@@ -126,7 +126,7 @@ def verify():
 
         #send mail to the user
 
-        return jsonify({'status': 200, 'message': "User verified"})
+        return jsonify({'status': 200, 'message': "User verified","hash":hsh})  
     
 @app.route('/bookSlot', methods=['POST'])
 def bookSlot():
@@ -156,4 +156,4 @@ def bookSlot():
 
 
 
-app.run()
+app.run(debug=True)
