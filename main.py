@@ -5,7 +5,7 @@ from flask_ngrok import run_with_ngrok
 from hashlib import sha256,blake2b
 import json
 mydb = mysql.connector.connect(
-    host="192.168.1.13",
+    host="localhost",
     user="root",
     password="",
     database='slotbooking'
@@ -15,7 +15,7 @@ headers = {
     'Access-Control-Allow-Origin': '*'
 }
 app = Flask(__name__)
-run_with_ngrok(app)
+# run_with_ngrok(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
@@ -85,7 +85,7 @@ def resetCampaign():
 def getAllUsers():
     db.execute("SELECT * FROM users")
     users = db.fetchall()
-    if users:
+    if not(users):
         return jsonify({'status': 201, 'message': "Table is empty or doesn't exist"})
     return jsonify({'status': 200, 'data': users})
 
@@ -93,7 +93,7 @@ def getAllUsers():
 def getAllSlots():
     db.execute("SELECT * FROM slots")
     slots = db.fetchall()
-    if slots:
+    if not(slots):
         return jsonify({'status': 201, 'message': "Table is empty or doesn't exist"})
     return jsonify({'status': 200, 'data': slots})
 
@@ -104,7 +104,7 @@ def verify():
     email = data['email']
     db.execute("SELECT * FROM users WHERE email=%s", (email)) 
     user = db.fetchone()
-    if user:
+    if not(user):
         return jsonify({'status': 201, 'message': "User doesn't exist"})
     else:
         #generate hash
@@ -143,3 +143,5 @@ def bookSlot():
 
 
 
+
+app.run()
