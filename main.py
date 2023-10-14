@@ -50,8 +50,8 @@ def addCampaign():
 
     for slot in slots:
         # try:
-        db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s,%s)",
-                   (slot["startTime"], slot["endTime"], slot["available"]))
+        db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s,%d)",
+                   (slot["startTime"], slot["endTime"], int(slot["available"])))
         # except:
         #     return jsonify({"message": "Issue adding the Slot with at time:"+slot["startTime"], 'status': 201})
         mydb.commit()
