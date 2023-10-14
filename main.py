@@ -10,7 +10,7 @@ mydb = mysql.connector.connect(
     password="",
     database='slotBooking'
 )
-db = mydb.cursor(dictionary=True)
+db = mydb.cursor(dictionary=True,buffered=  True)
 headers = {
     'Access-Control-Allow-Origin': '*'
 }
