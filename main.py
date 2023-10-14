@@ -38,7 +38,7 @@ def addCampaign():
     
     for user in users:
         try:
-            db.execute("select * from users where email=%s", (user["email"]))
+            db.execute("select * from users where email=%s", (user["email"],))
             if db.fetchone():
                 continue
                 return jsonify({"message": "User with email:"+user["email"]+" already exists", 'status': 201})
