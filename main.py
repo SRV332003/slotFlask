@@ -139,10 +139,11 @@ def bookSlot():
             if slot['available'] == 0:
                 return jsonify({'status': 201, 'message': "Slot not available"})
             else:
-                db.execute("INSERT INTO bookings (userid,slotid) VALUES (%s,%s)", (userid,slotid))
+                
+                db.execute("UPDATE users SET bookStatus=1, slotid=%s WHERE id=%s", (slotid,id))
                 db.execute("UPDATE slots SET available=available-1 WHERE id=%s", (slotid,))
                 mydb.commit()
-                db.execute("UPDATE users SET bookStatus=1 WHERE id=%s", (useri,d))
+                
                 return jsonify({'status': 200, 'message': "Slot booked"})
         else:
             return jsonify({'status': 201, 'message': "Slot doesn't exist"})
@@ -154,15 +155,13 @@ def bookSlot():
 def checkBooking():
     data = request.get_json()
     hsh = data['hash']
-    db.execute("SELECT id FROM users WHERE hash=%s", (hsh,))
+    db.execute("SELECT id,bookstatus FROM users WHERE hash=%s", (hsh,))
     userid = db.fetchone()
     if userid:
-        db.execute("SELECT * FROM bookings WHERE userid=%s", (userid,))
-        booking = db.fetchone()
-        if booking:
-            return jsonify({'status': 201, 'message': "Slot already booked!"})
+        if userid['bookstatus']:
+                return jsonify({'status': 200, 'message': "Slot booked"})
         else:
-            return jsonify({'status': 200, 'message': "Slot not booked"})
+            return jsonify({'status': 201, 'message': "Slot not booked"})
     else:
         return jsonify({'status': 202, 'message': "User doesn't exist"})
 
@@ -174,5 +173,7 @@ def getCampaignStatus():
             return jsonify({"message": "Campaign is live", 'status': 200,"data": True})
         else:
             return jsonify({"message": "Campaign is not live", 'status': 201, "data": False})
+
+
 
 app.run(debug=True)
