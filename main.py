@@ -115,16 +115,8 @@ def verify():
     else:
         if db["bookStatus"]:
             return jsonify({'status': 201, 'message': "User already verified"})
-        #generate hash
-        hsh = blake2b(sha256(sha256((email+"Manan2023").encode('utf-8')).hexdigest().encode('utf-8')).hexdigest().encode('utf-8')).hexdigest()
-
-        # db.execute("update users set hash=%s where email=%s", (hsh, email))
-        db.execute("update users set hash=%s where email=%s", (hsh, email))
-        mydb.commit()
-
-        #send mail to the user
-
-        return jsonify({'status': 200, 'message': "User verified","hash":hsh})  
+        
+        return jsonify({'status': 200, 'message': "User verified"})  
     
 @app.route('/bookSlot', methods=['POST'])
 def bookSlot():
