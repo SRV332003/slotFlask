@@ -50,13 +50,13 @@ def addCampaign():
         if db.fetchone():
             continue
             return jsonify({"message": "User with email:"+user["email"]+" already exists", 'status': 201})
-        db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year) VALUES (%s,%s)",
+        db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year) VALUES (%s,%s,%s,%s,%s,%s)",
                 (user["name"],user["email"], user["mobile"],user["rollnumber"],user["branch"],user["year"]))
         mydb.commit()
 
     for slot in slots:
         try:
-            db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s)",
+            db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s,%s)",
                    (slot["startTime"], slot["endTime"], slot["available"]))
         except:
             return jsonify({"message": "Issue adding the Slot with at time:"+slot["startTime"], 'status': 201})
@@ -134,19 +134,19 @@ def verify():
 def bookSlot():
     data = request.get_json()
     hsh,slotid = data['hash'],data['slotid']
-    db.execute("SELECT id FROM users WHERE hash=%s", (hsh))
+    db.execute("SELECT id FROM users WHERE hash=%s", (hsh,))
     userid = db.fetchone()
     if userid:
-        db.execute("SELECT * FROM slots WHERE id=%s", (slotid))
+        db.execute("SELECT * FROM slots WHERE id=%s", (slotid,))
         slot = db.fetchone()
         if slot:
             if slot['available'] == 0:
                 return jsonify({'status': 201, 'message': "Slot not available"})
             else:
                 db.execute("INSERT INTO bookings (userid,slotid) VALUES (%s,%s)", (userid,slotid))
-                db.execute("UPDATE slots SET available=available-1 WHERE id=%s", (slotid))
+                db.execute("UPDATE slots SET available=available-1 WHERE id=%s", (slotid,))
                 mydb.commit()
-                db.execute("UPDATE users SET bookStatus=1 WHERE id=%s", (userid))
+                db.execute("UPDATE users SET bookStatus=1 WHERE id=%s", (useri,d))
                 return jsonify({'status': 200, 'message': "Slot booked"})
         else:
             return jsonify({'status': 201, 'message': "Slot doesn't exist"})
