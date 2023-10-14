@@ -41,8 +41,8 @@ def addCampaign():
             db.execute("select * from users where email=%s", (user["email"]))
             if db.fetchone():
                 return jsonify({"message": "User with email:"+user["email"]+" already exists", 'status': 201})
-            db.execute("INSERT INTO users (name,email,mobile) VALUES (%s,%s)",
-                    (user["name"],user["email"], user["mobile"]))
+            db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year) VALUES (%s,%s)",
+                    (user["name"],user["email"], user["mobile"],user["rollnumber"],user["branch"],user["year"]))
         except:
             return jsonify({"message": "Issue adding the User with email:"+user["email"], 'status': 201})
         mydb.commit()
