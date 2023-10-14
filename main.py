@@ -8,7 +8,7 @@ mydb = mysql.connector.connect(
     host="localhost",
     user="root",
     password="",
-    database='slotbooking'
+    database='slotBooking'
 )
 db = mydb.cursor(dictionary=True)
 headers = {
@@ -18,6 +18,13 @@ app = Flask(__name__)
 # run_with_ngrok(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+
+def query(query):
+    mydb.connect()
+    db.execute(query)
+    db.commit()
+    mydb.close()
+    return db
 
 @app.route('/', methods=['POST', "GET"])
 def home():
@@ -69,10 +76,9 @@ def resetCampaign():
     data = request.get_json()
 
     if data["password"] == "Manan_technosurge_slots_2023":
-        db.execute("DELETE FROM users")
-        db.execute("DELETE FROM slots")
-        db.execute("DELETE FROM bookings")
-        mydb.commit()
+        query("DELETE FROM users")
+        query("DELETE FROM slots")
+        query("DELETE FROM bookings")
 
         with open('data.json', 'w') as f:
             f.write(jsonify({"campaign": False}))
@@ -83,7 +89,8 @@ def resetCampaign():
 
 @app.route('/getAllUsers', methods=['GET'])
 def getAllUsers():
-    db.execute("SELECT * FROM users")
+    
+    db = query("SELECT * FROM users")
     users = db.fetchall()
     if not(users):
         return jsonify({'status': 201, 'message': "Table is empty or doesn't exist"})
@@ -91,7 +98,7 @@ def getAllUsers():
 
 @app.route('/getAllSlots', methods=['GET'])
 def getAllSlots():
-    db.execute("SELECT * FROM slots")
+    db = query("SELECT * FROM slots")
     slots = db.fetchall()
     if not(slots):
         return jsonify({'status': 201, 'message': "Table is empty or doesn't exist"})
@@ -102,15 +109,16 @@ def getAllSlots():
 def verify():
     data = request.get_json()
     email = data['email']
-    db.execute("SELECT * FROM users WHERE email=%s", (email)) 
+    db = query("SELECT * FROM users WHERE email=%s", (email))
     user = db.fetchone()
     if not(user):
         return jsonify({'status': 201, 'message': "User doesn't exist"})
     else:
         #generate hash
         hsh = blake2b(sha256(sha256((email+"Manan2023").encode('utf-8')).hexdigest().encode('utf-8')).hexdigest().encode('utf-8')).hexdigest()
-        db.execute("update users set hash=%s where email=%s", (hsh, email))
-        mydb.commit()
+
+        # db.execute("update users set hash=%s where email=%s", (hsh, email))
+        db = query("update users set hash=%s where email=%s", (hsh, email))
 
         #send mail to the user
 
