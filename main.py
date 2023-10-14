@@ -154,10 +154,10 @@ def bookSlot():
 def checkBooking():
     data = request.get_json()
     hsh = data['hash']
-    db.execute("SELECT id FROM users WHERE hash=%s", (hsh))
+    db.execute("SELECT id FROM users WHERE hash=%s", (hsh,))
     userid = db.fetchone()
     if userid:
-        db.execute("SELECT * FROM bookings WHERE userid=%s", (userid))
+        db.execute("SELECT * FROM bookings WHERE userid=%s", (userid,))
         booking = db.fetchone()
         if booking:
             return jsonify({'status': 201, 'message': "Slot already booked!"})
@@ -166,6 +166,13 @@ def checkBooking():
     else:
         return jsonify({'status': 202, 'message': "User doesn't exist"})
 
-
+@app.route('/getCampaignStatus', methods=['POST'])
+def getCampaignStatus():
+    with open('data.json', 'r') as f:
+        inf = json.load(f)
+        if inf["campaign"]:
+            return jsonify({"message": "Campaign is live", 'status': 200,"data": True})
+        else:
+            return jsonify({"message": "Campaign is not live", 'status': 201, "data": False})
 
 app.run(debug=True)
