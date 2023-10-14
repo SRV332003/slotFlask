@@ -166,7 +166,7 @@ def checkBooking():
     else:
         return jsonify({'status': 202, 'message': "User doesn't exist"})
 
-@app.route('/getCampaignStatus', methods=['POST'])
+@app.route('/getCampaignStatus', methods=['GET'])
 def getCampaignStatus():
     with open('data.json', 'r') as f:
         inf = json.load(f)
