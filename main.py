@@ -19,9 +19,9 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
-def query(query):
+def query(query,data=None):
     mydb.connect()
-    db.execute(query)
+    db.execute(query,data)
     try:
         mydb.commit()
     except:
@@ -112,7 +112,7 @@ def getAllSlots():
 def verify():
     data = request.get_json()
     email = data['email']
-    db = query("SELECT * FROM users WHERE email=%s", (email))
+    db = query("SELECT * FROM users WHERE email=%s",(email))
     user = db.fetchone()
     if not(user):
         return jsonify({'status': 201, 'message': "User doesn't exist"})
