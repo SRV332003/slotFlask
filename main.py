@@ -37,29 +37,23 @@ def addCampaign():
             return jsonify({"message": "Campaign already exists.\n Please Reset it before updating new data", 'status': 201})
     
     for user in users:
-        # try:
-        #     db.execute("select * from users where email=%s", (user["email"],))
-        #     if db.fetchone():
-        #         continue
-        #         return jsonify({"message": "User with email:"+user["email"]+" already exists", 'status': 201})
-        #     db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year) VALUES (%s,%s)",
-        #             (user["name"],user["email"], user["mobile"],user["rollnumber"],user["branch"],user["year"]))
-        # except:
-        #     return jsonify({"message": "Issue adding the User with email:"+user["email"], 'status': 201})
-        db.execute("select * from users where email=%s", (user["email"],))
-        if db.fetchone():
-            continue
-            return jsonify({"message": "User with email:"+user["email"]+" already exists", 'status': 201})
-        db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year,hash) VALUES (%s,%s,%s,%s,%s,%s,%s)",
+        try:
+            db.execute("select * from users where email=%s", (user["email"],))
+            if db.fetchone():
+                continue
+                return jsonify({"message": "User with email:"+user["email"]+" already exists", 'status': 201})
+            db.execute("INSERT INTO users (name,email,mobile,rollnumber,branch,year,hash) VALUES (%s,%s,%s,%s,%s,%s,%s)",
                 (user["name"],user["email"], user["mobile"],user["rollnumber"],user["branch"],user["year"],""))
+        except:
+            return jsonify({"message": "Issue adding the User with email:"+user["email"], 'status': 201})
         mydb.commit()
 
     for slot in slots:
-        try:
-            db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s,%s)",
+        # try:
+        db.execute("INSERT INTO slots (startTime,endTime,available) VALUES (%s,%s,%s)",
                    (slot["startTime"], slot["endTime"], slot["available"]))
-        except:
-            return jsonify({"message": "Issue adding the Slot with at time:"+slot["startTime"], 'status': 201})
+        # except:
+        #     return jsonify({"message": "Issue adding the Slot with at time:"+slot["startTime"], 'status': 201})
         mydb.commit()
     with open('data.json', 'w') as f:
         f.write(jsonify({"campaign": True}))
