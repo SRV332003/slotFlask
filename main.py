@@ -78,7 +78,7 @@ def resetCampaign():
         mydb.commit()
         
         with open('data.json', 'w') as f:
-            f.write(jsonify({"campaign": False}))
+            json.dump({"campaign": False}, f)
         return jsonify({"data": "Campaign Reset", 'status': 200})
     
     return jsonify({"data": "Its a Deja Vu!!!", 'status': 404})
